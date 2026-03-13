@@ -1,34 +1,66 @@
 # Projet-Web-H26-Bibliotheque
-Projet de serveur web pour la gestion d'une bibliothèque (Backend) - Équipe IFM30-12.
-Membres de l'équipe
-Abdelouahab Adel
 
-Rayane Lakhdar Hammachin
+Projet de serveur web pour la gestion d'une bibliothèque (Backend)
 
-Zaid Messahli
+## Équipe IFM30-12
 
+Membres de l'équipe :
 
-Répartition des Tables
-Chaque membre est responsable du développement des API pour au moins deux tables:
+- Abdelouahab Adel
+- Bensalem Abdelhak
+- Hammachin Rayane Lakhdar
+- Messahli Zaid
 
-Abdelouahab : Tables Users (Utilisateurs) et Roles (Rôles) — Gestion de l'authentification et des autorisations.
+---
 
-Rayane : Tables Books (Livres) et Categories (Catégories).
+## Répartition des tables
 
-Zaid : Tables Borrowings (Emprunts) et Authors (Auteurs).
+Chaque membre est responsable du développement des API pour au moins deux tables :
 
-Lien GitHub du Projet
-URL : https://github.com/abdelouahab2742615/Projet-Web-H26-Bibliotheque
+- Abdelouahab : Tables **Users (Utilisateurs)** et **Roles (Rôles)** — Gestion de l'authentification et des autorisations.
 
-Technologies utilisées
+- Rayane : Tables **Books (Livres)** et **Categories (Catégories)**.
 
-Backend : Node.js / Express 
+- Zaid : Tables **Loans (Emprunts)** et **Authors (Auteurs)**.
 
+- Abdelhak : Tables **Publishers (Maisons d'édition)** et **Reservations (Réservations)**.
 
-ORM : Sequelize (MySQL) 
+---
 
+## Structure de la base de données
 
-Sécurité : JWT (JSON Web Token) et Express-validator (à venir en semaine 3) 
+Le projet utilise les tables suivantes :
 
+- Roles : gestion des rôles utilisateurs
+- Users : comptes utilisateurs
+- Authors : auteurs des livres
+- Categories : catégories des livres
+- Publishers : maisons d’édition
+- Books : livres de la bibliothèque
+- Loans : emprunts de livres
+- Reservations : réservations de livres
 
-Tests : Postman
+---
+
+## Technologies utilisées
+
+Backend : **Node.js / Express**
+
+ORM : **Sequelize (MySQL)**
+
+Base de données : **MySQL**
+
+Authentification : **JWT (JSON Web Token)**
+
+Validation : **Express-validator**
+
+Tests API : **Postman**
+
+Gestion du projet : **GitHub**
+
+---
+
+## Lien GitHub du projet
+
+URL :  
+https://github.com/abdelouahab2742615/Projet-Web-H26-Bibliotheque
