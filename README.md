@@ -69,3 +69,5 @@ Gestion du projet : **GitHub**
 
 URL :  
 https://github.com/abdelouahab2742615/Projet-Web-H26-Bibliotheque
+
+API Bibliothèque - Roles & Users implémentés
