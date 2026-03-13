@@ -60,6 +60,11 @@ Gestion du projet : **GitHub**
 
 ---
 
+## Diagramme de la base de données
+
+![Diagramme ERD](diagramme/erd-bibliotheque.png)
+
+
 ## Lien GitHub du projet
 
 URL :  
