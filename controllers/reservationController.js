@@ -1,63 +1,134 @@
-const Reservation = require("../modèles/Reservation");
+const Reservation = require('../models/Reservation');
+const Book = require('../models/Book');
+const User = require('../models/User');
+const { validationResult } = require('express-validator');
 
-exports.createReservation = async (req, res) => {
-    try {
-        const reservation = await Reservation.create(req.body);
-        res.status(201).json(reservation);
-    } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
+// Get all reservations
+const getAllReservations = async (req, res) => {
+  try {
+    const { page = 1, limit = 10, status } = req.query;
+    const offset = (page - 1) * limit;
+
+    const where = status ? { status } : {};
+
+    const reservations = await Reservation.findAndCountAll({
+      where,
+      include: [
+        { model: User, attributes: ['id', 'username', 'email'] },
+        { model: Book, attributes: ['id', 'title', 'isbn'] }
+      ],
+      limit: parseInt(limit),
+      offset: parseInt(offset),
+      order: [['reservationDate', 'DESC']]
+    });
+
+    res.status(200).json({
+      total: reservations.count,
+      page: parseInt(page),
+      totalPages: Math.ceil(reservations.count / limit),
+      data: reservations.rows
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch reservations' });
+  }
 };
 
-exports.getReservations = async (req, res) => {
-    try {
-        const reservations = await Reservation.findAll();
-        res.status(200).json(reservations);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
+// Get reservation by ID
+const getReservationById = async (req, res) => {
+  try {
+    const reservation = await Reservation.findByPk(req.params.id, {
+      include: [
+        { model: User, attributes: ['id', 'username', 'email'] },
+        { model: Book, attributes: ['id', 'title', 'isbn'] }
+      ]
+    });
+
+    if (!reservation) {
+      return res.status(404).json({ error: 'Reservation not found' });
     }
+
+    res.status(200).json(reservation);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch reservation' });
+  }
 };
 
-exports.getReservationById = async (req, res) => {
-    try {
-        const reservation = await Reservation.findByPk(req.params.id);
-        if (reservation) {
-            res.status(200).json(reservation);
-        } else {
-            res.status(404).json({ error: "Reservation not found" });
-        }
-    } catch (error) {
-        res.status(500).json({ error: error.message });
+// Create reservation
+const createReservation = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  try {
+    const { userId, bookId, expiryDate } = req.body;
+
+    const book = await Book.findByPk(bookId);
+    if (!book) {
+      return res.status(404).json({ error: 'Book not found' });
     }
+
+    const reservation = await Reservation.create({
+      userId,
+      bookId,
+      reservationDate: new Date(),
+      expiryDate,
+      status: 'pending'
+    });
+
+    res.status(201).json(reservation);
+  } catch (error) {
+    res.status(400).json({
+      error: 'Failed to create reservation',
+      details: error.message
+    });
+  }
 };
 
-exports.updateReservation = async (req, res) => {
-    try {
-        const [updated] = await Reservation.update(req.body, {
-            where: { id: req.params.id }
-        });
-        if (updated) {
-            const updatedReservation = await Reservation.findByPk(req.params.id);
-            res.status(200).json(updatedReservation);
-        } else {
-            res.status(404).json({ error: "Reservation not found" });
-        }
-    } catch (error) {
-        res.status(400).json({ error: error.message });
+// Update reservation
+const updateReservation = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  try {
+    const reservation = await Reservation.findByPk(req.params.id);
+    if (!reservation) {
+      return res.status(404).json({ error: 'Reservation not found' });
     }
+
+    const { status, expiryDate } = req.body;
+    await reservation.update({ status, expiryDate });
+
+    res.status(200).json(reservation);
+  } catch (error) {
+    res.status(400).json({
+      error: 'Failed to update reservation',
+      details: error.message
+    });
+  }
 };
 
-exports.deleteReservation = async (req, res) => {
-    try {
-        const deleted = await Reservation.destroy({
-            where: { id: req.params.id }
-        });
-        if (deleted) {
-            res.status(204).send();
-        } else {
-            res.status(404).json({ error: "Reservation not found" });
-        }
-    } catch (error) {
-        res.status(500).json({ error: error.message });
+// Delete reservation
+const deleteReservation = async (req, res) => {
+  try {
+    const reservation = await Reservation.findByPk(req.params.id);
+    if (!reservation) {
+      return res.status(404).json({ error: 'Reservation not found' });
     }
+
+    await reservation.destroy();
+    res.status(204).send();
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to delete reservation' });
+  }
+};
+
+module.exports = {
+  getAllReservations,
+  getReservationById,
+  createReservation,
+  updateReservation,
+  deleteReservation
 };
