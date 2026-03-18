@@ -1,9 +1,8 @@
-const Publisher = require('../models/Publisher');
+const Publisher = require("../modèles/Publisher");
 
 exports.createPublisher = async (req, res) => {
     try {
-        const { name, country, phone } = req.body;
-        const publisher = await Publisher.create({ name, country, phone });
+        const publisher = await Publisher.create(req.body);
         res.status(201).json(publisher);
     } catch (error) {
         res.status(400).json({ error: error.message });
@@ -22,10 +21,11 @@ exports.getPublishers = async (req, res) => {
 exports.getPublisherById = async (req, res) => {
     try {
         const publisher = await Publisher.findByPk(req.params.id);
-        if (!publisher) {
-            return res.status(404).json({ error: 'Publisher not found' });
+        if (publisher) {
+            res.status(200).json(publisher);
+        } else {
+            res.status(404).json({ error: "Publisher not found" });
         }
-        res.status(200).json(publisher);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -33,13 +33,15 @@ exports.getPublisherById = async (req, res) => {
 
 exports.updatePublisher = async (req, res) => {
     try {
-        const publisher = await Publisher.findByPk(req.params.id);
-        if (!publisher) {
-            return res.status(404).json({ error: 'Publisher not found' });
+        const [updated] = await Publisher.update(req.body, {
+            where: { id: req.params.id }
+        });
+        if (updated) {
+            const updatedPublisher = await Publisher.findByPk(req.params.id);
+            res.status(200).json(updatedPublisher);
+        } else {
+            res.status(404).json({ error: "Publisher not found" });
         }
-        const { name, country, phone } = req.body;
-        await publisher.update({ name, country, phone });
-        res.status(200).json(publisher);
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
@@ -47,12 +49,14 @@ exports.updatePublisher = async (req, res) => {
 
 exports.deletePublisher = async (req, res) => {
     try {
-        const publisher = await Publisher.findByPk(req.params.id);
-        if (!publisher) {
-            return res.status(404).json({ error: 'Publisher not found' });
+        const deleted = await Publisher.destroy({
+            where: { id: req.params.id }
+        });
+        if (deleted) {
+            res.status(204).send();
+        } else {
+            res.status(404).json({ error: "Publisher not found" });
         }
-        await publisher.destroy();
-        res.status(204).send();
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

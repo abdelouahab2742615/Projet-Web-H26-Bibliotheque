@@ -11,7 +11,6 @@ const categoryRoutes = require('./routes/categoryRoutes');
 const borrowingRoutes = require('./routes/borrowingRoutes');
 const reservationRoutes = require('./routes/reservationRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
-const publisherRoutes = require('./routes/publisherRoutes');
 
 const app = express();
 
@@ -29,7 +28,6 @@ app.use('/api/categories', categoryRoutes);
 app.use('/api/borrowings', borrowingRoutes);
 app.use('/api/reservations', reservationRoutes);
 app.use('/api/reviews', reviewRoutes);
-app.use('/api/publishers', publisherRoutes);
 
 // Basic route
 app.get('/', (req, res) => {
