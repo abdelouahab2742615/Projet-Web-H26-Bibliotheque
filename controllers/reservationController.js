@@ -42,7 +42,11 @@ const getReservationById = async (req, res) => {
         { model: Book, attributes: ['id', 'title', 'isbn'] }
       ]
     });
-    if (!reservation) return res.status(404).json({ error: 'Reservation not found' });
+
+    if (!reservation) {
+      return res.status(404).json({ error: 'Reservation not found' });
+    }
+
     res.status(200).json(reservation);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch reservation' });
@@ -52,16 +56,21 @@ const getReservationById = async (req, res) => {
 // Create reservation
 const createReservation = async (req, res) => {
   const errors = validationResult(req);
-  if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
 
   try {
     const { userId, bookId, expiryDate } = req.body;
 
     const book = await Book.findByPk(bookId);
-    if (!book) return res.status(404).json({ error: 'Book not found' });
+    if (!book) {
+      return res.status(404).json({ error: 'Book not found' });
+    }
 
     const reservation = await Reservation.create({
-      userId, bookId,
+      userId,
+      bookId,
       reservationDate: new Date(),
       expiryDate,
       status: 'pending'
@@ -69,24 +78,35 @@ const createReservation = async (req, res) => {
 
     res.status(201).json(reservation);
   } catch (error) {
-    res.status(400).json({ error: 'Failed to create reservation', details: error.message });
+    res.status(400).json({
+      error: 'Failed to create reservation',
+      details: error.message
+    });
   }
 };
 
-// Update reservation status
+// Update reservation
 const updateReservation = async (req, res) => {
   const errors = validationResult(req);
-  if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
 
   try {
     const reservation = await Reservation.findByPk(req.params.id);
-    if (!reservation) return res.status(404).json({ error: 'Reservation not found' });
+    if (!reservation) {
+      return res.status(404).json({ error: 'Reservation not found' });
+    }
 
     const { status, expiryDate } = req.body;
     await reservation.update({ status, expiryDate });
+
     res.status(200).json(reservation);
   } catch (error) {
-    res.status(400).json({ error: 'Failed to update reservation', details: error.message });
+    res.status(400).json({
+      error: 'Failed to update reservation',
+      details: error.message
+    });
   }
 };
 
@@ -94,7 +114,10 @@ const updateReservation = async (req, res) => {
 const deleteReservation = async (req, res) => {
   try {
     const reservation = await Reservation.findByPk(req.params.id);
-    if (!reservation) return res.status(404).json({ error: 'Reservation not found' });
+    if (!reservation) {
+      return res.status(404).json({ error: 'Reservation not found' });
+    }
+
     await reservation.destroy();
     res.status(204).send();
   } catch (error) {
@@ -102,4 +125,10 @@ const deleteReservation = async (req, res) => {
   }
 };
 
-module.exports = { getAllReservations, getReservationById, createReservation, updateReservation, deleteReservation };
+module.exports = {
+  getAllReservations,
+  getReservationById,
+  createReservation,
+  updateReservation,
+  deleteReservation
+};
