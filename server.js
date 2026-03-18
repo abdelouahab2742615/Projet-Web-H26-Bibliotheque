@@ -11,6 +11,7 @@ const categoryRoutes = require('./routes/categoryRoutes');
 const borrowingRoutes = require('./routes/borrowingRoutes');
 const reservationRoutes = require('./routes/reservationRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
+const publisherRoutes = require('./routes/publisherRoutes');
 
 const app = express();
 
@@ -28,22 +29,23 @@ app.use('/api/categories', categoryRoutes);
 app.use('/api/borrowings', borrowingRoutes);
 app.use('/api/reservations', reservationRoutes);
 app.use('/api/reviews', reviewRoutes);
+app.use('/api/publishers', publisherRoutes);
 
 // Basic route
 app.get('/', (req, res) => {
-  res.send('Serveur de la bibliothèque opérationnel!');
+    res.send('Serveur de la bibliothèque opérationnel!');
 });
 
 const PORT = process.env.PORT || 3000;
 
 // Database connection & Server start
 db.sync({ alter: true }) // Sync models (alter: true updates tables if they exist)
-  .then(() => {
-    console.log('Database synchronized');
-    app.listen(PORT, () => {
-      console.log(`Server is running on http://localhost:${PORT}`);
+    .then(() => {
+        console.log('Database synchronized');
+        app.listen(PORT, () => {
+            console.log(`Server is running on http://localhost:${PORT}`);
+        });
+    })
+    .catch((err) => {
+        console.error('Failed to sync database:', err);
     });
-  })
-  .catch((err) => {
-    console.error('Failed to sync database:', err);
-  });
