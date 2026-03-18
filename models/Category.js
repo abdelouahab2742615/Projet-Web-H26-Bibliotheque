@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../models/index');
+const sequelize = require('./index');
 
-const Role = sequelize.define('Role', {
+const Category = sequelize.define('Category', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -11,10 +11,13 @@ const Role = sequelize.define('Role', {
     type: DataTypes.STRING,
     allowNull: false,
     unique: true
+  },
+  description: {
+    type: DataTypes.TEXT
   }
 }, {
-  tableName: 'roles',
-  timestamps: false
+  tableName: 'categories',
+  timestamps: true
 });
 
-module.exports = Role;
+module.exports = Category;

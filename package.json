@@ -4,9 +4,9 @@
   "description": "Projet de serveur web pour la gestion d'une bibliothèque (Backend)",
   "main": "index.js",
   "scripts": {
-  "start": "node server.js",
+    "start": "node server.js",
   "dev": "nodemon server.js"
-},
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/abdelouahab2742615/Projet-Web-H26-Bibliotheque.git"

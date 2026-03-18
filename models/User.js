@@ -1,40 +1,44 @@
-const { DataTypes } = require("sequelize");
-const sequelize = require("../config/db");
+const { DataTypes } = require('sequelize');
+const sequelize = require('../models/index');
+const Role = require('./Role');
 
-const User = sequelize.define(
-  "User",
-  {
-    id: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true
-    },
-    nom: {
-      type: DataTypes.STRING(100),
-      allowNull: false
-    },
-    prenom: {
-      type: DataTypes.STRING(100),
-      allowNull: false
-    },
-    email: {
-      type: DataTypes.STRING(150),
-      allowNull: false,
-      unique: true
-    },
-    password: {
-      type: DataTypes.STRING(255),
-      allowNull: false
-    },
-    roleId: {
-      type: DataTypes.INTEGER,
-      allowNull: true
+const User = sequelize.define('User', {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
+  },
+  username: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true
+  },
+  email: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true,
+    validate: {
+      isEmail: true
     }
   },
-  {
-    tableName: "users",
-    timestamps: false
+  password: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  roleId: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: Role,
+      key: 'id'
+    }
   }
-);
+}, {
+  tableName: 'users',
+  timestamps: true
+});
+
+// Define Association
+User.belongsTo(Role, { foreignKey: 'roleId' });
+Role.hasMany(User, { foreignKey: 'roleId' });
 
 module.exports = User;

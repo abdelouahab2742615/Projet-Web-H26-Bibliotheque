@@ -1,14 +1,14 @@
-const sequelize = require("../config/db");
+const { Sequelize } = require('sequelize');
 
-const Role = require("./Role");
-const User = require("./User");
+const sequelize = new Sequelize(
+  process.env.DB_NAME || 'bibliotheque',
+  process.env.DB_USER || 'root',
+  process.env.DB_PASSWORD || '',
+  {
+    host: process.env.DB_HOST || 'localhost',
+    dialect: 'mysql',
+    logging: false
+  }
+);
 
-// Relations
-Role.hasMany(User, { foreignKey: "roleId" });
-User.belongsTo(Role, { foreignKey: "roleId" });
-
-module.exports = {
-  sequelize,
-  Role,
-  User,
-};
+module.exports = sequelize;
