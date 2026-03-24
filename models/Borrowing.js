@@ -41,4 +41,4 @@ const Borrowing = sequelize.define('Borrowing', {
 Borrowing.belongsTo(User, { foreignKey: 'userId' });
 User.hasMany(Borrowing, { foreignKey: 'userId' });
 
-Borrowing.belongsTo(Book, { foreignKey: 'bookId' });
+module.exports = Borrowing;
