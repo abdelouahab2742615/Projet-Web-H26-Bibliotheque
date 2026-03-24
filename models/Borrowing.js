@@ -1,7 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('./index');
 const User = require('./User');
-const Book = require('./Book');
 
 const Borrowing = sequelize.define('Borrowing', {
   id: {
@@ -16,8 +15,7 @@ const Borrowing = sequelize.define('Borrowing', {
   },
   bookId: {
     type: DataTypes.INTEGER,
-    allowNull: false,
-    references: { model: Book, key: 'id' }
+    allowNull: false
   },
   borrowDate: {
     type: DataTypes.DATEONLY,
@@ -42,8 +40,5 @@ const Borrowing = sequelize.define('Borrowing', {
 
 Borrowing.belongsTo(User, { foreignKey: 'userId' });
 User.hasMany(Borrowing, { foreignKey: 'userId' });
-
-Borrowing.belongsTo(Book, { foreignKey: 'bookId' });
-Book.hasMany(Borrowing, { foreignKey: 'bookId' });
 
 module.exports = Borrowing;
