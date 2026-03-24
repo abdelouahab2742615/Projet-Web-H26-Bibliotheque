@@ -1,5 +1,4 @@
 const Borrowing = require('../models/Borrowing');
-const Book = require('../models/Book');
 const User = require('../models/User');
 const { validationResult } = require('express-validator');
 
@@ -14,8 +13,7 @@ const getAllBorrowings = async (req, res) => {
     const borrowings = await Borrowing.findAndCountAll({
       where,
       include: [
-        { model: User, attributes: ['id', 'username', 'email'] },
-        { model: Book, attributes: ['id', 'title', 'isbn'] }
+        { model: User, attributes: ['id', 'username', 'email'] }
       ],
       limit: parseInt(limit),
       offset: parseInt(offset),
@@ -37,10 +35,7 @@ const getAllBorrowings = async (req, res) => {
 const getBorrowingById = async (req, res) => {
   try {
     const borrowing = await Borrowing.findByPk(req.params.id, {
-      include: [
-        { model: User, attributes: ['id', 'username', 'email'] },
-        { model: Book, attributes: ['id', 'title', 'isbn'] }
-      ]
+      include: [{ model: User, attributes: ['id', 'username', 'email'] }]
     });
     if (!borrowing) return res.status(404).json({ error: 'Borrowing not found' });
     res.status(200).json(borrowing);
@@ -57,11 +52,6 @@ const createBorrowing = async (req, res) => {
   try {
     const { userId, bookId, dueDate } = req.body;
 
-    // Vérifier si le livre est disponible
-    const book = await Book.findByPk(bookId);
-    if (!book) return res.status(404).json({ error: 'Book not found' });
-    if (book.availableCopies < 1) return res.status(400).json({ error: 'No copies available for this book' });
-
     const borrowing = await Borrowing.create({
       userId,
       bookId,
@@ -69,9 +59,6 @@ const createBorrowing = async (req, res) => {
       dueDate,
       status: 'active'
     });
-
-    // Décrémenter les copies disponibles
-    await book.update({ availableCopies: book.availableCopies - 1 });
 
     res.status(201).json(borrowing);
   } catch (error) {
@@ -90,16 +77,11 @@ const returnBook = async (req, res) => {
 
     await borrowing.update({ returnDate: new Date(), status: 'returned' });
 
-    // Incrémenter les copies disponibles
-    await borrowing.Book.update({ availableCopies: borrowing.Book.availableCopies + 1 });
+    // Incrémenter les copies disponibles);
+    if (!borrowing) return res.status(404).json({ error: 'Borrowing not found' });
+    if (borrowing.status === 'returned') return res.status(400).json({ error: 'Book already returned' });
 
-    res.status(200).json(borrowing);
-  } catch (error) {
-    res.status(400).json({ error: 'Failed to return book', details: error.message });
-  }
-};
-
-// Update borrowing
+    await borrowing.update({ returnDate: new Date(), status: 'returned'
 const updateBorrowing = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });

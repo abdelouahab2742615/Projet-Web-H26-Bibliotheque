@@ -1,5 +1,4 @@
 const Author = require('../models/Author');
-const Book = require('../models/Book');
 const { validationResult } = require('express-validator');
 
 // Get all authors
@@ -34,9 +33,7 @@ const getAllAuthors = async (req, res) => {
 // Get author by ID
 const getAuthorById = async (req, res) => {
   try {
-    const author = await Author.findByPk(req.params.id, {
-      include: [{ model: Book, attributes: ['id', 'title', 'publishedYear'] }]
-    });
+    const author = await Author.findByPk(req.params.id);
     if (!author) return res.status(404).json({ error: 'Author not found' });
     res.status(200).json(author);
   } catch (error) {
