@@ -123,8 +123,17 @@ const updateUser = async (req, res) => {
     const user = await User.findByPk(req.params.id);
     if (!user) return res.status(404).json({ error: 'User not found' });
 
-    const { username, email, roleId } = req.body;
-    await user.update({ username, email, roleId });
+    const { username, email, password, roleId } = req.body;
+    
+    const updateData = { username, email, roleId };
+    
+    // Hash password if provided
+    if (password && password.trim()) {
+      const salt = await bcrypt.genSalt(10);
+      updateData.password = await bcrypt.hash(password, salt);
+    }
+    
+    await user.update(updateData);
 
     const userResponse = user.toJSON();
     delete userResponse.password;

@@ -37,7 +37,7 @@ app.get('/', (req, res) => {
 const PORT = process.env.PORT || 3000;
 
 // Database connection & Server start
-db.sync({ alter: true }) // Sync models (alter: true updates tables if they exist)
+db.sync() // Sync models (alter: true updates tables if they exist)
   .then(() => {
     console.log('Database synchronized');
     app.listen(PORT, () => {
